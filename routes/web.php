@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use App\Mail\OrderShipped;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -33,10 +33,12 @@ Route::group(["middleware" => "authCheck"], function () {
     });
 });
 
+// CRUD ROUTES
 Route::get('/posts/trash', [PostController::class, 'trashed'])->name('posts.trashed');
 Route::get('/posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
 Route::delete('posts/{id}/force-delete', [PostController::class, 'forceDelete'])->name('posts.force_delete');
 Route::resource('posts', PostController::class);
+// CRUD ROUTES END
 
 //Global Middleware
 Route::get('/unavailable', function () {
@@ -81,3 +83,15 @@ Route::get('flash-session',function(Request $request){
 Route::get('forget-cache', function () {
     Cache::forget('posts');
 });
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
