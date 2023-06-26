@@ -35,11 +35,13 @@ Route::group(["middleware" => "authCheck"], function () {
     });
 });
 
-// CRUD ROUTES
-Route::get('/posts/trash', [PostController::class, 'trashed'])->name('posts.trashed');
-Route::get('/posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
-Route::delete('posts/{id}/force-delete', [PostController::class, 'forceDelete'])->name('posts.force_delete');
-Route::resource('posts', PostController::class);
+// CRUD ROUTES - Auth middleware
+Route::group(["middleware" => 'auth'], function () {
+    Route::get('/posts/trash', [PostController::class, 'trashed'])->name('posts.trashed');
+    Route::get('/posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
+    Route::delete('posts/{id}/force-delete', [PostController::class, 'forceDelete'])->name('posts.force_delete');
+    Route::resource('posts', PostController::class);
+});
 // CRUD ROUTES END
 
 //Breeze Routes
@@ -74,33 +76,33 @@ Route::get('send-mail', function () {
 });
 
 Route::get('get-session', function (Request $request) {
-     $data = $request->session()->all();
+    $data = $request->session()->all();
     // $data = $request->session()->get('_token');
     dd($data);
 });
 
-Route::get('save-session',function(Request $request){
+Route::get('save-session', function (Request $request) {
     // $request->session()->put('user_status','Logged_in');
     session(['user_ip' => '12.12.12.12']);
     return redirect('get-session');
 });
 
 Route::get('destroy-session', function (Request $request) {
-    $request->session()->forget(['user_id','user_status']);
+    $request->session()->forget(['user_id', 'user_status']);
     session()->forget(['user_ip']);
     session()->flush();
 });
 
-Route::get('flash-session',function(Request $request){
-    $request->session()->flash('status','true');
+Route::get('flash-session', function (Request $request) {
+    $request->session()->flash('status', 'true');
     return redirect('get-session');
 });
 Route::get('forget-cache', function () {
     Cache::forget('posts');
 });
 
-Route::get('user-data',function(){
+Route::get('user-data', function () {
     return auth()->user()->name;
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
