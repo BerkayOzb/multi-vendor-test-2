@@ -35,7 +35,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $this->authorize('create_post');
+        $this->authorize('create',Post::class);
         $categories = Category::all();
         return view('create', compact('categories'));
     }
