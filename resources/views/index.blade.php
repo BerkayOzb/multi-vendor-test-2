@@ -11,8 +11,10 @@
                         </h4>
                     </div>
                     <div class="col-md-6 d-flex justify-content-end">
-                        <a class="btn-sm btn-success mx-1 btn" href="{{route('posts.create')}}">Create</a>
-                        <a class="btn-sm btn-warning mx-1 btn" href="{{route('posts.trashed')}}">Trashed</a>
+                        @can('create',\App\Models\Post::class)
+                            <a class="btn-sm btn-success mx-1 btn" href="{{ route('posts.create') }}">Create</a>
+                            <a class="btn-sm btn-warning mx-1 btn" href="{{ route('posts.trashed') }}">Trashed</a>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -32,30 +34,36 @@
                     </thead>
                     <tbody>
                         @foreach ($posts as $post)
-                        <tr>
-                            <th scope="row">{{$post->id}}</th>
-                            <td><img src="{{asset($post->image)}}" alt="" width="80"></td>
-                            <td>{{$post->title}}</td>
-                            <td>{{$post->description}}</td>
-                            <td>{{$post->category->name}}</td>
-                            <td>{{date('d-m-Y', strtotime($post->created_at))}}</td>
-                            <td>
-                               <div class="d-flex">
-                                <a class="btn-sm btn-success btn" href="{{route('posts.show', $post->id)}}">Show</a>
-                                <a class="btn-sm btn-primary btn mx-2" href="{{route('posts.edit', $post->id)}}">Edit</a>
-                                {{-- <a class="btn-sm btn-danger" href="{{route('posts.destroy', $post->id)}}">Delete</a> --}}
-                                <form action="{{route('posts.destroy',$post->id)}}" method="post">
-                                    @csrf
-                                    @method('delete')
-                                    <button class="btn-sm btn-danger btn" type="submit">Delete</button>
-                                </form>
-                               </div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <th scope="row">{{ $post->id }}</th>
+                                <td><img src="{{ asset($post->image) }}" alt="" width="80"></td>
+                                <td>{{ $post->title }}</td>
+                                <td>{{ $post->description }}</td>
+                                <td>{{ $post->category->name }}</td>
+                                <td>{{ date('d-m-Y', strtotime($post->created_at)) }}</td>
+                                <td>
+                                    <div class="d-flex">
+                                        <a class="btn-sm btn-success btn"
+                                            href="{{ route('posts.show', $post->id) }}">Show</a>
+                                        @can('edit_post')
+                                            <a class="btn-sm btn-primary btn mx-2"
+                                                href="{{ route('posts.edit', $post->id) }}">Edit</a>
+                                        @endcan
+                                        @can('delete_post')
+                                            {{-- <a class="btn-sm btn-danger" href="{{route('posts.destroy', $post->id)}}">Delete</a> --}}
+                                            <form action="{{ route('posts.destroy', $post->id) }}" method="post">
+                                                @csrf
+                                                @method('delete')
+                                                <button class="btn-sm btn-danger btn" type="submit">Delete</button>
+                                            </form>
+                                        @endcan
+                                    </div>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
-                {{$posts->links()}}
+                {{ $posts->links() }}
             </div>
         </div>
     </div>
