@@ -45,11 +45,11 @@
                                     <div class="d-flex">
                                         <a class="btn-sm btn-success btn"
                                             href="{{ route('posts.show', $post->id) }}">Show</a>
-                                        @can('edit_post')
+                                        @can('update',$post)
                                             <a class="btn-sm btn-primary btn mx-2"
                                                 href="{{ route('posts.edit', $post->id) }}">Edit</a>
                                         @endcan
-                                        @can('delete_post')
+                                        @can('delete',$post)
                                             {{-- <a class="btn-sm btn-danger" href="{{route('posts.destroy', $post->id)}}">Delete</a> --}}
                                             <form action="{{ route('posts.destroy', $post->id) }}" method="post">
                                                 @csrf
