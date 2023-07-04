@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -20,12 +21,12 @@ class PostController extends Controller
     public function index()
     {
 
-        $posts = Cache::remember('posts-page-'.request('page',1),60*3,function(){
+        $posts = Cache::remember('posts-page-' . request('page', 1), 60 * 3, function () {
             return Post::with('category')->paginate(5);
         });
-         $posts = Cache::rememberForever('posts',function(){
-             return Post::with('category')->paginate(5);
-         });
+        $posts = Cache::rememberForever('posts', function () {
+            return Post::with('category')->paginate(5);
+        });
         return view('index', compact('posts'));
     }
 
@@ -34,6 +35,7 @@ class PostController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Post::class);
         $categories = Category::all();
         return view('create', compact('categories'));
     }
@@ -43,6 +45,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Post::class);
+
         $request->validate([
             'image' => ['required', 'max:2028', 'image'],
             'title' => ['required', 'max:255'],
@@ -67,7 +71,7 @@ class PostController extends Controller
     public function show(string $id)
     {
         $post = Post::findOrFail($id);
-        return view('show',compact('post'));
+        return view('show', compact('post'));
     }
 
     /**
@@ -76,6 +80,7 @@ class PostController extends Controller
     public function edit(string $id)
     {
         $post = Post::findOrFail($id);
+        $this->authorize('update', $post);
         $categories = Category::all();
         return view('edit', compact('post', 'categories'));
     }
@@ -85,13 +90,14 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
+        $post = Post::findOrFail($id);
+        $this->authorize('update', $post);
         $request->validate([
             'title' => ['required', 'max:255'],
             'category_id' => ['required', 'integer'],
             'description' => ['required']
         ]);
-        $post = Post::findOrFail($id);
+
         if ($request->hasFile('image')) {
             $request->validate([
                 'image' => ['required', 'max:22028', 'image']
@@ -116,23 +122,29 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         $post = Post::findOrFail($id);
+        $this->authorize('delete',$post);
         $post->delete();
         return redirect()->route('posts.index');
     }
-    public function trashed() {
+    public function trashed()
+    {
+        $this->authorize('delete_post');
         $posts = Post::onlyTrashed()->get();
-        return view('trashed',compact('posts'));
+        return view('trashed', compact('posts'));
     }
-    public function restore($id){
+    public function restore($id)
+    {
+        $this->authorize('delete_post');
         $post = Post::onlyTrashed()->findOrFail($id);
         $post->restore();
         return redirect()->back();
     }
-    public function forceDelete($id) {
+    public function forceDelete($id)
+    {
+        $this->authorize('delete_post');
         $post = Post::onlyTrashed()->findOrFail($id);
         File::delete(public_path($post->image));
         $post->forceDelete();
         return redirect()->back();
     }
 }
-
