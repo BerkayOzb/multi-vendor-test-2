@@ -17,7 +17,7 @@
                         </h4>
                     </div>
                     <div class="col-md-6 d-flex justify-content-end">
-                        <a class="btn-sm btn-success btn mx-1" href="{{route('posts.index')}}">Back</a>
+                        <a class="btn-sm btn-success btn mx-1" href="{{route('posts.index')}}">Go Back</a>
                     </div>
                 </div>
             </div>
