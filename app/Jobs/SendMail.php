@@ -2,12 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Mail\PostPublished;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class SendMail implements ShouldQueue
 {
@@ -26,6 +28,6 @@ class SendMail implements ShouldQueue
      */
     public function handle(): void
     {
-        //
+        Mail::send(new PostPublished());
     }
 }

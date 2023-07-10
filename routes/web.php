@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Jobs\SendMail;
 use App\Mail\OrderShipped;
+use App\Mail\PostPublished;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,6 +75,10 @@ Route::get('send-mail', function () {
     //     $message->to('lwoberkay@gmail.com')->subject('noreply');
     // });
     Mail::send(new OrderShipped);
+});
+
+Route::get('send-maill',function(){
+    SendMail::dispatch();
 });
 
 Route::get('get-session', function (Request $request) {
