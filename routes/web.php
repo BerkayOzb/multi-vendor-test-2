@@ -83,7 +83,7 @@ Route::get('send-maill',function(){
 });
 
 Route::get('user-register', function(){
-    $email = 'asdasd@asd.com'
+    $email = 'asdasd@asd.com';
     event(new UserRegistered($email));
 });
 
