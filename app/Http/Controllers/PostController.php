@@ -107,7 +107,7 @@ class PostController extends Controller
             File::delete(public_path($post->image));
             $post->image = 'storage/uploads/' . $fileName;
         }
-
+        
         $post->title = $request->title;
         $post->description = $request->description;
         $post->category_id = $request->category_id;

@@ -118,3 +118,7 @@ Route::get('user-data', function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::get('greeting',function(){
+    return view('greeting');
+});
