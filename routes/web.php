@@ -8,6 +8,7 @@ use App\Mail\OrderShipped;
 use App\Mail\PostPublished;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
@@ -119,6 +120,9 @@ Route::get('user-data', function () {
 
 require __DIR__ . '/auth.php';
 
-Route::get('greeting',function(){
+// en,ve TR dilini kullancağız
+Route::get('greeting/{locale}',function($locale){
+    App::setLocale($locale);
     return view('greeting');
-});
+})->name('greeting');
+
